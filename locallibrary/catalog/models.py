@@ -1,7 +1,10 @@
 from django.db import models
 from django.urls import reverse
 import uuid
-
+from django.shortcuts import get_object_or_404
+def book_detail_view(request, primary_key):
+    book = get_object_or_404(Book, pk=primary_key)
+    return render(request, 'catalog/book_detail.html', context={'book': book})
 
 
 class Genre(models.Model):
@@ -34,6 +37,8 @@ class Book(models.Model):
     def display_genre(self):
         """create a string for the Genre. This is required to display genre in admin. """
         return ', '.join(genre.name for genre in self.genre.all()[:3])
+    class Meta:
+        ordering = ['title']
 
 
 
@@ -78,14 +83,14 @@ class Author(models.Model):
     date_of_death = models.DateField('Died', null=True, blank=True)
 
     class Meta:
-        ordering = ['last_name', 'first_name']
+        ordering = ['last_name']
 
     def get_absolute_url(self):
         """Returns the url to access a particular author instance."""
         return reverse('author-detail', args=[str(self.id)])
     
-
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.last_name}, {self.first_name}'
+    
 
