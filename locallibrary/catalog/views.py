@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from catalog.models import Book, BookInstance, Author, Genre
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 def index(request):
     """View function for home page of site."""
     # Generate counts of some of the main objects
@@ -38,12 +40,32 @@ class BookListView(generic.ListView):
 class BookDetailView(generic.DetailView):
     model = Book
     template_name = 'book_detail.html' 
+
 class AuthorListView(generic.ListView):
     model = Author
     context_object_name = 'author_list'
     queryset = Author.objects.all()
     template_name = 'author_list.html'
     paginate_by = 5
+
 class AuthorDetailView(generic.DetailView):
     model = Author
     template_name = 'author_detail.html'
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
+    model = BookInstance
+    template_name ='bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+    # context_object_name = 'bookinstance_list'
+    
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).order_by('due_back')
+
+class LoanedBooksListView(LoginRequiredMixin, generic.ListView):
+    model = BookInstance
+    template_name = 'list_borrowed.html'
+    paginate_by = 10
+    def get_queryset(self):
+        return BookInstance.objects.all()
