@@ -11,6 +11,12 @@ from django.urls import reverse
 
 from catalog.forms import RenewBookForm
 
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+from catalog.models import Author
+
 def index(request):
     """View function for home page of site."""
     # Generate counts of some of the main objects
@@ -103,7 +109,41 @@ def renew_book_librarian(request, pk):
     }
     return render(request, 'book_renew_librarian.html', context)
 
+class AuthorCreate(PermissionRequiredMixin,CreateView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Author
+    fields = '__all__'
+    initial = {'date_of_death': '05/01/2018'}
+    template_name = 'author_form.html'
+
+class AuthorUpdate(PermissionRequiredMixin,UpdateView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Author
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+    template_name = 'author_form.html'
 
 
+class AuthorDelete(PermissionRequiredMixin,DeleteView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Author
+    success_url = reverse_lazy('authors')
+    template_name = 'author_form_delete.html'
 
+class BookCreate(PermissionRequiredMixin,CreateView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Book
+    template_name = 'book_form.html'
+
+class BookDelete(PermissionRequiredMixin,DeleteView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Book
+    template_name = 'book_form_delete.html'
+    success_url = reverse_lazy('books')
+
+
+class BookUpdate(PermissionRequiredMixin,UpdateView):
+    permission_required = ('catalog.can_mark_returned', 'catalog.can_edit')
+    model = Book
+    template_name = 'book_form.html'
+    fields = ['title', 'author', 'isbn']
 
