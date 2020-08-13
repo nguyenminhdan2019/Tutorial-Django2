@@ -28,8 +28,8 @@
         </ul>
         <ul>
           {% if perms.catalog.can_mark_returned %}
-            <li>Staff</>
-            <li><a href="{% url 'all-borrowed' %}">All Borrowed</a></li>
+            <h6>Staff</h6>
+            <li><a href="{% url 'all-borrowed' %}">All Borrowed</a></li> 
           {% endif %}
         </ul>
         
