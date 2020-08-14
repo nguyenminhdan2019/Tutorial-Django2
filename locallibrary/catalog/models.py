@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.urls import reverse
 import uuid
 
@@ -65,7 +66,6 @@ class BookInstance(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-
         return f'({self.book.title})'
     def title(self):
         """String for representing the Model object."""
@@ -84,6 +84,7 @@ class Author(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a particular author instance."""
         return reverse('author-detail', args=[str(self.id)])
+    
 
     def __str__(self):
         """String for representing the Model object."""
