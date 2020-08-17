@@ -6,7 +6,7 @@ from .models import Author, Book, Genre, BookInstance
 
 @admin.register(BookInstance)
 class BookInstanceAdmin(admin.ModelAdmin):
-    list_display = ('title','status', 'borrower', 'due_back')
+    list_display = ('title','status', 'due_back', 'borrower', 'id')
     list_filter = ('status', 'due_back')
     fieldsets = (
         (None, {
@@ -30,5 +30,6 @@ class BookAdmin(admin.ModelAdmin):
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'date_of_birth', 'date_of_death')
     fields = ['first_name', 'last_name', ('date_of_birth', 'date_of_death')]
+
 
 

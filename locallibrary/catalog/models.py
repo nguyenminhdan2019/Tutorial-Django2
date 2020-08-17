@@ -5,6 +5,14 @@ from django.contrib.auth.models import User
 from datetime import date
 
 
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from datetime import date
+
+def book_detail_view(request, primary_key):
+    book = get_object_or_404(Book, pk=primary_key)
+    return render(request, 'catalog/book_detail.html', context={'book': book})
+
 
 class Genre(models.Model):
     """ Model representing a book genre """
@@ -36,6 +44,8 @@ class Book(models.Model):
     def display_genre(self):
         """create a string for the Genre. This is required to display genre in admin. """
         return ', '.join(genre.name for genre in self.genre.all()[:3])
+    class Meta:
+        ordering = ['title']
 
 
 
@@ -62,6 +72,7 @@ class BookInstance(models.Model):
         default='m',
         help_text='Book availability',
     )
+
     @property
     def is_overdue(self):
         if self.due_back and date.today() > self.due_back:
@@ -78,6 +89,23 @@ class BookInstance(models.Model):
     def title(self):
         """String for representing the Model object."""
         return f'({self.book.title})'
+
+    class Meta:
+        ordering = ['due_back']
+        permissions = (("can_mark_returned", "Set book as returned"),)   
+
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'({self.book.title})'
+    def title(self):
+        """String for representing the Model object."""
+        return f'({self.book.title})'
+    @property
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
     
 class Author(models.Model):
     """Model representing an author."""
@@ -87,14 +115,14 @@ class Author(models.Model):
     date_of_death = models.DateField('Died', null=True, blank=True)
 
     class Meta:
-        ordering = ['last_name', 'first_name']
+        ordering = ['last_name']
 
     def get_absolute_url(self):
         """Returns the url to access a particular author instance."""
         return reverse('author-detail', args=[str(self.id)])
     
-
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.last_name}, {self.first_name}'
+    
 
